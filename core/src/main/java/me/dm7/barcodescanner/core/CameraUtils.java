@@ -1,39 +1,37 @@
 package me.dm7.barcodescanner.core;
 
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.hardware.Camera;
-
-import java.util.List;
+import android.os.Build;
 
 public class CameraUtils {
     /** A safe way to get an instance of the Camera object. */
-    public static Camera getCameraInstance() {
+    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
+    public static Camera getCameraInstance(int cameraId){
         Camera c = null;
         try {
-            c = Camera.open(); // attempt to get a Camera instance
+            // attempt to get a Camera instance
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD
+                    && cameraId >= 0 && cameraId < Camera.getNumberOfCameras()) {
+                c = Camera.open(cameraId);
+            } else {
+                c = Camera.open();
+            }
         }
-        catch (Exception e) {
+        catch (Exception e){
             // Camera is not available (in use or does not exist)
         }
         return c; // returns null if camera is unavailable
     }
 
-    public static boolean isFlashSupported(Camera camera) {
-        /* Credits: Top answer at http://stackoverflow.com/a/19599365/868173 */
-        if (camera != null) {
-            Camera.Parameters parameters = camera.getParameters();
-
-            if (parameters.getFlashMode() == null) {
-                return false;
-            }
-
-            List<String> supportedFlashModes = parameters.getSupportedFlashModes();
-            if (supportedFlashModes == null || supportedFlashModes.isEmpty() || supportedFlashModes.size() == 1 && supportedFlashModes.get(0).equals(Camera.Parameters.FLASH_MODE_OFF)) {
-                return false;
-            }
-        } else {
-            return false;
+    public static boolean isFlashSupported(Context context){
+        PackageManager packageManager = context.getPackageManager();
+        // if device support camera flash?
+        if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
+            return true;
         }
-
-        return true;
+        return false;
     }
 }

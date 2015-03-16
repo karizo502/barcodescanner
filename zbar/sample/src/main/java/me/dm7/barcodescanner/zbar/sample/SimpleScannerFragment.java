@@ -23,14 +23,14 @@ public class SimpleScannerFragment extends Fragment implements ZBarScannerView.R
     public void onResume() {
         super.onResume();
         mScannerView.setResultHandler(this);
-        mScannerView.startCamera();
+        mScannerView.startCamera(1);
     }
 
     @Override
     public void handleResult(Result rawResult) {
         Toast.makeText(getActivity(), "Contents = " + rawResult.getContents() +
                 ", Format = " + rawResult.getBarcodeFormat().getName(), Toast.LENGTH_SHORT).show();
-        mScannerView.startCamera();
+        mScannerView.startCamera(1);
     }
 
     @Override

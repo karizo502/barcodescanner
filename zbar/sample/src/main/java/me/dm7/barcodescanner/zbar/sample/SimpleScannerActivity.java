@@ -21,7 +21,7 @@ public class SimpleScannerActivity extends ActionBarActivity implements ZBarScan
     public void onResume() {
         super.onResume();
         mScannerView.setResultHandler(this);
-        mScannerView.startCamera();
+        mScannerView.startCamera(1);
     }
 
     @Override
@@ -32,8 +32,8 @@ public class SimpleScannerActivity extends ActionBarActivity implements ZBarScan
 
     @Override
     public void handleResult(Result rawResult) {
-        Toast.makeText(this, "Contents = " + rawResult.getContents() +
+        Toast.makeText(this, "Contents1 = " + rawResult.getContents() +
                 ", Format = " + rawResult.getBarcodeFormat().getName(), Toast.LENGTH_SHORT).show();
-        mScannerView.startCamera();
+        mScannerView.startCamera(1);
     }
 }
