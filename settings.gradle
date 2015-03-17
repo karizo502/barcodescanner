@@ -1,1 +1,2 @@
-include "core", "zxing:zxing", "zxing:sample", "zbar:zbar", "zbar:sample"
+include ':timeattendance'
+include "core", "zbar:zbar", "zbar:sample"
