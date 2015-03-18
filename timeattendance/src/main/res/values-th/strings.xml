@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">ระบบลงเวลาเข้า-ออกงาน</string>
+
+    <string name="hello_world">สวัสดี ชาวโลก!</string>
+    <string name="action_settings">ตั้งค่า</string>
+
+    <string name="txt_ipaddress">ไอพี แอดเดรส</string>
+    <string name="txt_port">พอร์ต</string>
+    <string name="txt_language">ภาษา</string>
+    <string name="txt_scanner">แสกนบัตร</string>
+    <string name="txt_capture">ถ่ายรูป</string>
+
+    <string name="action_save">บันทึก</string>
+
+    <string-array name="language_array">
+        <item value="EN">อังกฤษ</item>
+        <item value="TH">ไทย</item>
+    </string-array>
+    <string-array name="camera_array">
+        <item value="0">กล้องหลัง</item>
+        <item value="1">กล้องหน้า</item>
+    </string-array>
+</resources>
