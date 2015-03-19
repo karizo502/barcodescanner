@@ -14,11 +14,19 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.os.NetworkOnMainThreadException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
@@ -26,6 +34,9 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.URL;
 import java.net.URLConnection;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.ArrayList;
 import java.util.Locale;
 
 
@@ -39,6 +50,8 @@ public class MainActivity extends ActionBarActivity {
 
         checkLocale();
 
+        Button b1 = (Button) findViewById(R.id.button_start);
+        b1.setOnClickListener(myhandler);
         TextView status = (TextView) findViewById(R.id.txt_status);
         if (checkSetting() == true) {
             if (checkOnline() == true) {
@@ -60,7 +73,40 @@ public class MainActivity extends ActionBarActivity {
         //editor.putInt("flag", val+1);
         //editor.commit();
     }
+    View.OnClickListener myhandler = new View.OnClickListener() {
+        public void onClick(View v) {
 
+            try{ // Loading the MySQL Connector/J driver
+                Class.forName("com.mysql.jdbc.Driver");
+                System.out.println("com.mysql.jdbc.Driver");
+            }catch(ClassNotFoundException e){
+                System.out.println("Error while loading the Driver: " + e.getMessage());
+            }
+            System.out.println("MySQL Connect Example.");
+            Connection conn = null;
+            String url = "jdbc:mysql://157.179.24.77:3306/";
+            String dbName = "game";
+            String driver = "com.mysql.jdbc.Driver";
+            String userName = "root";
+            String password = "root";
+            try {
+                Class.forName(driver).newInstance();
+                conn = DriverManager.getConnection(url+dbName,userName,password);
+                Toast.makeText(getBaseContext(),
+                        "Connected to the database.", Toast.LENGTH_LONG)
+                        .show();
+                conn.close();
+                Toast.makeText(getBaseContext(),
+                        "Disconnected form the database.", Toast.LENGTH_LONG)
+                        .show();
+            } catch (Exception e) {
+                Toast.makeText(getBaseContext(),
+                        "Exception e = " , Toast.LENGTH_LONG)
+                        .show();
+                e.printStackTrace();
+            }
+        }
+    };
     @Override
     public void onResume() {
         super.onResume();
@@ -116,10 +162,24 @@ public class MainActivity extends ActionBarActivity {
         SharedPreferences settings = getSharedPreferences("ConfigFile", 0);
         String ipAddress = settings.getString("ipaddress", "");
 
-        if (isConnectedToServer(ipAddress) == true) {
+        return true;
+    }
+    public boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if (netInfo != null && netInfo.isConnected()) {
             return true;
-        } else {
+        }
+        return false;
+    }
+    private boolean isOnTheInternet() {
+        try {
+            URLConnection urlConnection = new URL("http://157.179.24.77").openConnection();
+            urlConnection.setConnectTimeout(400);
+            urlConnection.connect();
             return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 
@@ -158,22 +218,26 @@ public class MainActivity extends ActionBarActivity {
 
     public static boolean isHostReachable(String serverAddress, int serverTCPport, int timeoutMS){
         boolean connected = false;
-        Socket socket;
+        String sentence = "TCP Test #1n";
+        String modifiedSentence;
         try {
-            socket = new Socket();
-            SocketAddress socketAddress = new InetSocketAddress(serverAddress, serverTCPport);
-            socket.connect(socketAddress, timeoutMS);
-            if (socket.isConnected()) {
-                connected = true;
-                socket.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            socket = null;
+
+            Socket clientSocket = new Socket("192.168.18.116", 8080);
+            DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+            BufferedReader inFromServer = new BufferedReader(new
+                    InputStreamReader(clientSocket.getInputStream()));
+            outToServer.writeBytes(sentence + 'n');
+            connected = true;
+            clientSocket.close();
+
+        } catch (Exception e) {
+           // printScr("TCP Error: " + e.toString());
         }
+
         return connected;
     }
+
+
 
     public  void checkLocale(){
         //check locale

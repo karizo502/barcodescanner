@@ -44,6 +44,7 @@ public class SettingActivity extends ActionBarActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         language.setAdapter(adapter);
         String tmp_language= getLanguageDesc(settings.getString("language", "en"));
+        //Toast.makeText(this, "language = "+settings.getString("language", "en")+" | "+tmp_language, Toast.LENGTH_SHORT).show();
         if (!tmp_language.equals(null)) {
             spinnerPostion = adapter.getPosition(tmp_language);
             language.setSelection(spinnerPostion);
@@ -56,8 +57,9 @@ public class SettingActivity extends ActionBarActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         scanner.setAdapter(adapter1);
         String tmp_scanner= getCameraDesc(settings.getInt("scanner", 0));
+        //Toast.makeText(this, "language = "+settings.getInt("scanner", 0)+" | "+tmp_scanner, Toast.LENGTH_SHORT).show();
         if (!tmp_scanner.equals(null)) {
-            spinnerPostion = adapter.getPosition(tmp_scanner);
+            spinnerPostion = adapter1.getPosition(tmp_scanner);
             scanner.setSelection(spinnerPostion);
             spinnerPostion = 0;
         }
@@ -69,7 +71,7 @@ public class SettingActivity extends ActionBarActivity {
         capture.setAdapter(adapter2);
         String tmp_capture= getCameraDesc(settings.getInt("capture", 0));
         if (!tmp_capture.equals(null)) {
-            spinnerPostion = adapter.getPosition(tmp_capture);
+            spinnerPostion = adapter2.getPosition(tmp_capture);
             capture.setSelection(spinnerPostion);
             spinnerPostion = 0;
         }
@@ -98,6 +100,7 @@ public class SettingActivity extends ActionBarActivity {
             editor.putString("ipaddress", ipaddress.getText().toString());
             editor.putInt("port", Integer.valueOf(port.getText().toString()));
             editor.putString("language", getLanguageCode(language.getSelectedItem().toString()));
+            //Toast.makeText(this, "scanner = "+getCameraType(scanner.getSelectedItem().toString()), Toast.LENGTH_SHORT).show();
             editor.putInt("scanner", getCameraType(scanner.getSelectedItem().toString()));;      // 0 = back camera | 1 = front camera
             editor.putInt("capture", getCameraType(capture.getSelectedItem().toString()));  // 0 = back camera | 1 = front camera
             editor.commit();
@@ -111,9 +114,9 @@ public class SettingActivity extends ActionBarActivity {
 
     public String getLanguageCode(String language){
         String[] language_array = getResources().getStringArray(R.array.language_array);
-        if(language==language_array[0]) {
+        if(language.equals(language_array[0])) {
             return "en";
-        }else if(language==language_array[1]) {
+        }else if(language.equals(language_array[1])) {
             return "th";
         }else{
             return "en";
@@ -122,9 +125,9 @@ public class SettingActivity extends ActionBarActivity {
     }
     public String getLanguageDesc(String language){
         String[] language_array = getResources().getStringArray(R.array.language_array);
-        if(language=="en") {
+        if(language.equals("en")) {
             return language_array[0];
-        }else if(language=="th") {
+        }else if(language.equals("th")) {
             return language_array[1];
         }else{
             return language_array[0];
@@ -133,9 +136,9 @@ public class SettingActivity extends ActionBarActivity {
     }
     public int getCameraType(String camera){
         String[] camera_array = getResources().getStringArray(R.array.camera_array);
-        if(camera==camera_array[0]) {
+        if(camera.equals(camera_array[0])) {
             return 0;
-        }else if(camera==camera_array[1]) {
+        }else if(camera.equals(camera_array[1])) {
             return 1;
         }else{
             return 0;
@@ -144,9 +147,10 @@ public class SettingActivity extends ActionBarActivity {
     }
     public String getCameraDesc(int camera){
         String[] camera_array = getResources().getStringArray(R.array.camera_array);
-        if(camera==0) {
+        //Toast.makeText(this, "camera = "+camera+" | "+camera_array[0]+" | "+camera_array[1], Toast.LENGTH_SHORT).show();
+        if(camera == 0) {
             return camera_array[0];
-        }else if(camera==1) {
+        }else if(camera == 1) {
             return camera_array[1];
         }else{
             return camera_array[0];
