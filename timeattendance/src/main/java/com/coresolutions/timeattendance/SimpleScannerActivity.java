@@ -24,7 +24,8 @@ public class SimpleScannerActivity extends ActionBarActivity implements ZBarScan
     public void onResume() {
         super.onResume();
         mScannerView.setResultHandler(this);
-        mScannerView.startCamera(1);
+        SharedPreferences settings = getSharedPreferences("ConfigFile", 0);
+        mScannerView.startCamera( settings.getInt("scanner", 0));
     }
 
     @Override

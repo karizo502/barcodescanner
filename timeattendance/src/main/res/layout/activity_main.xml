@@ -16,7 +16,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start"
+        android:text="@string/action_start"
         android:id="@+id/button_start"
         android:layout_alignParentTop="false"
         android:layout_alignWithParentIfMissing="false"

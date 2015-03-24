@@ -4,6 +4,9 @@
     <string name="hello_world">สวัสดี ชาวโลก!</string>
     <string name="action_settings">ตั้งค่า</string>
 
+    <string name="status_online">ออนไลน์</string>
+    <string name="status_offline">ออฟไลน์</string>
+
     <string name="txt_ipaddress">ไอพี แอดเดรส</string>
     <string name="txt_port">พอร์ต</string>
     <string name="txt_language">ภาษา</string>
@@ -11,6 +14,7 @@
     <string name="txt_capture">ถ่ายรูป</string>
 
     <string name="action_save">บันทึก</string>
+    <string name="action_start">เริ่ม</string>
 
     <string-array name="language_array">
         <item value="EN">อังกฤษ</item>

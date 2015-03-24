@@ -1,6 +1,7 @@
 package com.coresolutions.timeattendance;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -53,11 +54,11 @@ public class MainActivity extends ActionBarActivity {
         TextView status = (TextView) findViewById(R.id.txt_status);
         if (checkSetting() == true) {
             if (checkOnline() == true) {
-                intent = new Intent(this, SimpleScannerActivity.class);
+                intent = new Intent(this, CaptureActivity.class);
                 startActivity(intent);
-                status.setText("Online");
+                status.setText(R.string.status_online);
             } else {
-                status.setText("Offline");
+                status.setText(R.string.status_offline);
             }
         } else {
             intent = new Intent(this, SettingActivity.class);
@@ -75,6 +76,8 @@ public class MainActivity extends ActionBarActivity {
         public void onClick(View v) {
             //pb.setVisibility(View.VISIBLE);
             //new MyAsyncTask().execute("http://157.179.24.77/test.php");
+            intent = new Intent(MainActivity.this, SimpleScannerActivity.class);
+            startActivity(intent);
         }
     };
 
@@ -152,15 +155,18 @@ public class MainActivity extends ActionBarActivity {
         config.locale = locale;
         getBaseContext().getResources().updateConfiguration(config,
                 getBaseContext().getResources().getDisplayMetrics());
+        //Toast.makeText(this, "complete", Toast.LENGTH_SHORT).show();
+        //restartActivity(this);
     }
 
     public  void checkState(){
         SharedPreferences settings = getSharedPreferences("ConfigFile", 0);
         String state = settings.getString("state", "main");
-        if(state=="scanner"){
-            intent = new Intent(this, CaptureActivity.class);
+        Toast.makeText(this, state, Toast.LENGTH_SHORT).show();
+        if(state.equals("scanner")){
+            intent = new Intent(this, CamTestActivity.class);
             startActivity(intent);
-        }else if(state=="capture"){
+        }else if(state.equals("capture")){
             intent = new Intent(this, SimpleScannerActivity.class);
             startActivity(intent);
         }else{
@@ -169,6 +175,15 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    public static void restartActivity(Activity act){
+
+        Intent intent=new Intent();
+        intent.setClass(act, act.getClass());
+        act.startActivity(intent);
+        act.finish();
+
+    }
 
 }
+
 

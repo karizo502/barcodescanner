@@ -26,6 +26,7 @@
         <activity android:name=".SettingActivity" android:screenOrientation="portrait" android:label="@string/app_name"/>
         <activity android:name=".SimpleScannerActivity" android:screenOrientation="portrait" android:label="@string/app_name" />
         <activity android:name=".CaptureActivity" android:screenOrientation="portrait" android:label="@string/app_name" />
+        <activity android:name=".CamTestActivity"  android:label="@string/app_name" />
     </application>
 
 </manifest>
