@@ -3,32 +3,37 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    >
-
-    <SurfaceView
-        android:id="@+id/surfaceview"
-        android:layout_width="fill_parent"
+    android:weightSum="1">
+    <FrameLayout android:id="@+id/FrameLayout01"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipChildren="false"
-        android:layout_weight="1" />
+        android:layout_weight="0.93">
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Hello"
-        />
+        <SurfaceView android:id="@+id/CameraView"
+            android:layout_width="310dp"
+            android:layout_height="413dp"
+            android:layout_gravity="center"></SurfaceView>
 
-    <Button
-        android:id="@+id/startcamerapreview"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="- Start Camera Preview -"
-        />
+        <TextView android:id="@+id/CountDownTextView"
+            android:textSize="100dip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="3"></TextView>
 
-    <Button
-        android:id="@+id/stopcamerapreview"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="- Stop Camera Preview -"
-        />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_chk_out"
+            android:text="check out"
+            android:layout_gravity="right|bottom" />
+
+        <Button android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_chk_in"
+            android:text="check in"
+            android:layout_gravity="left|bottom"></Button>
+
+    </FrameLayout>
+
 </LinearLayout>

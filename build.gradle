@@ -40,7 +40,7 @@ subprojects {
                 }
 
                 defaultConfig {
-                    minSdkVersion 9
+                    minSdkVersion 11
                     targetSdkVersion 21
                     versionCode 163
                     versionName "1.6.3"

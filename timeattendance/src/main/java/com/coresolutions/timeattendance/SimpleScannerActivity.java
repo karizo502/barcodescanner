@@ -42,14 +42,17 @@ public class SimpleScannerActivity extends ActionBarActivity implements ZBarScan
         //this.finish();
         //intent = new Intent(getApplicationContext(), CaptureActivity.class);
         //startActivity(intent);
-        SharedPreferences settings = getSharedPreferences("ConfigFile", 0);
-        SharedPreferences.Editor editor;
+        final GlobalClass globalVariable = (GlobalClass) getApplicationContext();
+        globalVariable.setState("scan");
 
-        editor = settings.edit();
-        editor.putString("userid",rawResult.getContents().toString() );
-        editor.putString("state","scanner" );
-        editor.commit();
         this.finish();
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        //Toast.makeText(this, "555", Toast.LENGTH_SHORT).show();
+        this.finish();
     }
 }

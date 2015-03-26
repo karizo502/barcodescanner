@@ -5,32 +5,32 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.PorterDuff;
 import android.os.AsyncTask;
-import android.preference.PreferenceActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.internal.spdy.Header;
-
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -39,23 +39,63 @@ import java.util.Locale;
 
 public class MainActivity extends ActionBarActivity {
     Intent intent;
+    TextView status;
+    String[] data;
+    String state;
 
+    public String getState() {
+        return state;
+    }
 
+    public void setState(String c_state) {
+        this.state = c_state;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        final GlobalClass globalVariable = (GlobalClass) getApplicationContext();
+        globalVariable.setState("main");
 
         checkLocale();
 
-        Button b1 = (Button) findViewById(R.id.button_start);
-        b1.setOnClickListener(myhandler);
-        TextView status = (TextView) findViewById(R.id.txt_status);
+        Button b0 = (Button) findViewById(R.id.button_start);
+
+        b0.setOnTouchListener(new View.OnTouchListener() {
+
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        v.getBackground().setColorFilter(0xe0f47521, PorterDuff.Mode.SRC_ATOP);
+                        v.invalidate();
+                        intent = new Intent(MainActivity.this, SimpleScannerActivity.class);
+                        startActivity(intent);
+                        break;
+                    }
+                    case MotionEvent.ACTION_UP: {
+                        v.getBackground().clearColorFilter();
+                        v.invalidate();
+                        break;
+                    }
+                }
+                return false;
+            }
+        });
+        //b0.setOnClickListener(myhandler0);
+
+        Button b1 = (Button) findViewById(R.id.button_scan);
+        b1.setOnClickListener(myhandler1);
+
+        Button b2 = (Button) findViewById(R.id.button_camera);
+        b2.setOnClickListener(myhandler2);
+
+        Button b3 = (Button) findViewById(R.id.button_task);
+        b3.setOnClickListener(myhandler3);
+
+        status = (TextView) findViewById(R.id.txt_status);
         if (checkSetting() == true) {
             if (checkOnline() == true) {
-                intent = new Intent(this, CaptureActivity.class);
-                startActivity(intent);
                 status.setText(R.string.status_online);
             } else {
                 status.setText(R.string.status_offline);
@@ -72,21 +112,36 @@ public class MainActivity extends ActionBarActivity {
         //editor.putInt("flag", val+1);
         //editor.commit();
     }
-    View.OnClickListener myhandler = new View.OnClickListener() {
+    View.OnClickListener myhandler0 = new View.OnClickListener() {
         public void onClick(View v) {
-            //pb.setVisibility(View.VISIBLE);
-            //new MyAsyncTask().execute("http://157.179.24.77/test.php");
             intent = new Intent(MainActivity.this, SimpleScannerActivity.class);
             startActivity(intent);
         }
     };
-
+    View.OnClickListener myhandler1 = new View.OnClickListener() {
+        public void onClick(View v) {
+            intent = new Intent(MainActivity.this, SimpleScannerActivity.class);
+            startActivity(intent);
+        }
+    };
+    View.OnClickListener myhandler2 = new View.OnClickListener() {
+        public void onClick(View v) {
+            intent = new Intent(MainActivity.this, CaptureActivity.class);
+            startActivity(intent);
+        }
+    };
+    View.OnClickListener myhandler3 = new View.OnClickListener() {
+        public void onClick(View v) {
+            intent = new Intent(MainActivity.this, HttpTaskActivity.class);
+            startActivity(intent);
+        }
+    };
 
     @Override
     public void onResume() {
         super.onResume();
         checkLocale();
-        //checkState();
+        checkState();
 
     }
 
@@ -136,7 +191,7 @@ public class MainActivity extends ActionBarActivity {
     public boolean checkOnline() {
         SharedPreferences settings = getSharedPreferences("ConfigFile", 0);
         String ipAddress = settings.getString("ipaddress", "");
-
+        //status.setText("Your NAME: "+data[1]+" "+data[3]);
         return true;
     }
 
@@ -160,18 +215,15 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public  void checkState(){
-        SharedPreferences settings = getSharedPreferences("ConfigFile", 0);
-        String state = settings.getString("state", "main");
-        Toast.makeText(this, state, Toast.LENGTH_SHORT).show();
-        if(state.equals("scanner")){
-            intent = new Intent(this, CamTestActivity.class);
+
+        final GlobalClass globalVariable = (GlobalClass) getApplicationContext();
+        Toast.makeText(this, globalVariable.getState(), Toast.LENGTH_SHORT).show();
+        if(globalVariable.getState().equals("scan")){
+            //new MyTask().execute(globalVariable.getEmpID().toString());
+            intent = new Intent(getApplicationContext(), CaptureActivity.class);
             startActivity(intent);
-        }else if(state.equals("capture")){
-            intent = new Intent(this, SimpleScannerActivity.class);
-            startActivity(intent);
-        }else{
-            //intent = new Intent(this, MainActivity.class);
-            //startActivity(intent);
+        }else if(globalVariable.getState().equals("capture")){
+            globalVariable.setState("main");
         }
     }
 
@@ -181,6 +233,52 @@ public class MainActivity extends ActionBarActivity {
         intent.setClass(act, act.getClass());
         act.startActivity(intent);
         act.finish();
+
+    }
+
+    private class MyTask extends AsyncTask<String, Integer, Double>{
+
+        @Override
+        protected Double doInBackground(String... params) {
+            // TODO Auto-generated method stub
+            postData(params[0]);
+            return null;
+        }
+
+        protected void onPostExecute(Double result) {
+            //pb.setVisibility(View.GONE);
+            Toast.makeText(getApplicationContext(), ""+data[1]+" "+data[3], Toast.LENGTH_LONG).show();
+            //status.setText(""+data[1]+" "+data[3]);
+        }
+        protected void onProgressUpdate(Integer... progress){
+            //pb.setProgress(progress[0]);
+        }
+
+        public void postData(String valueIWantToSend) {
+            // Create a new HttpClient and Post Header
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost("http://157.179.24.77/timeattendance/connect_base.php");
+
+            try {
+                // Add your data
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                nameValuePairs.add(new BasicNameValuePair("action", "emp_profile"));
+                nameValuePairs.add(new BasicNameValuePair("emp_id", valueIWantToSend));
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs,"UTF-8"));
+
+                // Execute HTTP Post Request
+                HttpResponse response = httpclient.execute(httppost);
+                String actual = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
+                Log.v("test", "Your data: " +actual); //response data
+                data = actual.split("[|]");
+                Log.v("test", "Your NAME: " +data[1]+" "+data[3]); //response data
+
+            } catch (ClientProtocolException e) {
+                Log.v("test", "Error: " + e.getMessage());
+            } catch (IOException e) {
+                Log.v("test", "Error: " + e.getMessage());
+            }
+        }
 
     }
 
