@@ -8,7 +8,7 @@ import android.app.Application;
 public class GlobalClass extends Application{
     private String state;
     private String empid;
-
+    private String name;
 
     public String getState() {
 
@@ -29,6 +29,16 @@ public class GlobalClass extends Application{
     public void setEmpID(String cEmpID) {
 
         empid = cEmpID;
+    }
+    public String getName() {
+
+        return name;
+    }
+
+    public void setName(String cName) {
+
+        name = cName;
+
     }
 
 }

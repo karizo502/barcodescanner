@@ -17,13 +17,13 @@
         android:layout_alignParentLeft="false"
         android:layout_alignParentRight="true" />
 
-    <at.markushi.ui.CircleButton
+<!--    <at.markushi.ui.CircleButton
         android:layout_width="100dip"
         android:layout_height="100dip"
         android:text="Start"
         android:src="@mipmap/ic_start"
         app:cb_color="#ff1cdc00"
-        app:cb_pressedRingWidth="8dip" />
+        app:cb_pressedRingWidth="8dip" /> -->
 
     <Button
         android:layout_width="100dp"

@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -11,6 +12,7 @@ import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -23,6 +25,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import junit.framework.Test;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 
 public class CaptureActivity extends Activity implements SurfaceHolder.Callback,Camera.ShutterCallback,Camera.PictureCallback{
 
@@ -41,6 +54,10 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback,
     public void onCreate(Bundle state) {
         super.onCreate(state);
         setContentView(R.layout.camera);
+
+        TextView txt_name = (TextView) findViewById(R.id.txt_name);
+        final GlobalClass globalVariable = (GlobalClass) getApplicationContext();
+        txt_name.setText(globalVariable.getName());
 
         getWindow().setFormat(PixelFormat.UNKNOWN);
         surfaceView = (SurfaceView)findViewById(R.id.CameraView);
@@ -61,7 +78,7 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback,
 
             @Override
             public void onClick(View arg0) {
-                camera.takePicture(CaptureActivity.this, null, null, CaptureActivity.this);
+                //camera.takePicture(CaptureActivity.this, null, null, CaptureActivity.this);
             }
         });
 
@@ -85,7 +102,11 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback,
             }});
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        camera.startPreview();
+    }
     @Override
     public void onPause() {
         super.onPause();
@@ -118,15 +139,15 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback,
           imageFileOS.flush();
           imageFileOS.close();
 
-          Toast t = Toast.makeText(this, "Saved JPEG!", Toast.LENGTH_SHORT);
-          t.show();
+            Toast.makeText(this, "Saved JPEG!", Toast.LENGTH_SHORT).show();
             final GlobalClass globalVariable = (GlobalClass) getApplicationContext();
             globalVariable.setState("capture");
-            CaptureActivity.this.finish();
+            String emp_id = globalVariable.getEmpID();
+            //Toast.makeText(this, globalVariable.getEmpID().toString(), Toast.LENGTH_SHORT).show();
+            new MyTask().execute(emp_id);
 
         } catch (Exception e) {
-          Toast t = Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT);
-          t.show();
+          Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         camera.startPreview();
       }
@@ -181,6 +202,49 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback,
         this.finish();
         final GlobalClass globalVariable = (GlobalClass) getApplicationContext();
         globalVariable.setState("main");
+    }
+
+    private class MyTask extends AsyncTask<String, Integer, Double> {
+
+        @Override
+        protected Double doInBackground(String... params) {
+            // TODO Auto-generated method stub
+            postData(params[0]);
+            return null;
+        }
+
+        protected void onPostExecute(Double result) {
+            //pb.setVisibility(View.GONE);
+            //Toast.makeText(getApplicationContext(), ""+data[1]+" "+data[3], Toast.LENGTH_LONG).show();
+            CaptureActivity.this.finish();
+        }
+        protected void onProgressUpdate(Integer... progress){
+            //pb.setProgress(progress[0]);
+        }
+
+        public void postData(String valueIWantToSend) {
+            // Create a new HttpClient and Post Header
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost("http://157.179.24.77/timeattendance/connect_base.php");
+
+            try {
+                // Add your data
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                nameValuePairs.add(new BasicNameValuePair("action", "time_attendance"));
+                nameValuePairs.add(new BasicNameValuePair("emp_id", valueIWantToSend));
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs,"UTF-8"));
+
+                // Execute HTTP Post Request
+                HttpResponse response = httpclient.execute(httppost);
+                String actual = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
+                Log.v("test", "Your capture data: " + actual); //response data
+            } catch (ClientProtocolException e) {
+                Log.v("test", "Error: " + e.getMessage());
+            } catch (IOException e) {
+                Log.v("test", "Error: " + e.getMessage());
+            }
+        }
+
     }
 
 }

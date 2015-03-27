@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +41,6 @@ import java.util.Locale;
 public class MainActivity extends ActionBarActivity {
     Intent intent;
     TextView status;
-    String[] data;
     String state;
 
     public String getState() {
@@ -217,9 +217,9 @@ public class MainActivity extends ActionBarActivity {
     public  void checkState(){
 
         final GlobalClass globalVariable = (GlobalClass) getApplicationContext();
-        Toast.makeText(this, globalVariable.getState(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, globalVariable.getState(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, globalVariable.getEmpID(), Toast.LENGTH_SHORT).show();
         if(globalVariable.getState().equals("scan")){
-            //new MyTask().execute(globalVariable.getEmpID().toString());
             intent = new Intent(getApplicationContext(), CaptureActivity.class);
             startActivity(intent);
         }else if(globalVariable.getState().equals("capture")){
@@ -236,51 +236,6 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
-    private class MyTask extends AsyncTask<String, Integer, Double>{
-
-        @Override
-        protected Double doInBackground(String... params) {
-            // TODO Auto-generated method stub
-            postData(params[0]);
-            return null;
-        }
-
-        protected void onPostExecute(Double result) {
-            //pb.setVisibility(View.GONE);
-            Toast.makeText(getApplicationContext(), ""+data[1]+" "+data[3], Toast.LENGTH_LONG).show();
-            //status.setText(""+data[1]+" "+data[3]);
-        }
-        protected void onProgressUpdate(Integer... progress){
-            //pb.setProgress(progress[0]);
-        }
-
-        public void postData(String valueIWantToSend) {
-            // Create a new HttpClient and Post Header
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost("http://157.179.24.77/timeattendance/connect_base.php");
-
-            try {
-                // Add your data
-                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                nameValuePairs.add(new BasicNameValuePair("action", "emp_profile"));
-                nameValuePairs.add(new BasicNameValuePair("emp_id", valueIWantToSend));
-                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs,"UTF-8"));
-
-                // Execute HTTP Post Request
-                HttpResponse response = httpclient.execute(httppost);
-                String actual = EntityUtils.toString(response.getEntity(), HTTP.UTF_8);
-                Log.v("test", "Your data: " +actual); //response data
-                data = actual.split("[|]");
-                Log.v("test", "Your NAME: " +data[1]+" "+data[3]); //response data
-
-            } catch (ClientProtocolException e) {
-                Log.v("test", "Error: " + e.getMessage());
-            } catch (IOException e) {
-                Log.v("test", "Error: " + e.getMessage());
-            }
-        }
-
-    }
 
 }
 
