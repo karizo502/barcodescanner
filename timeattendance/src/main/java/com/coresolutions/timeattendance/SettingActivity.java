@@ -21,7 +21,7 @@ import java.util.Locale;
  */
 public class SettingActivity extends ActionBarActivity {
     EditText ipaddress,port;
-    Spinner language,scanner,capture;
+    Spinner language,scanner,capture,resolution;
     Intent intent;
 
     @Override
@@ -77,6 +77,18 @@ public class SettingActivity extends ActionBarActivity {
             spinnerPostion = 0;
         }
 
+        resolution = (Spinner) findViewById(R.id.spn_resolution);
+        ArrayAdapter<CharSequence> adapter3 = ArrayAdapter.createFromResource(this,
+                R.array.resolution_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        resolution.setAdapter(adapter3);
+        String tmp_resolution= getResolutionDesc(settings.getInt("resolution", 0));
+        if (!tmp_resolution.equals(null)) {
+            spinnerPostion = adapter3.getPosition(tmp_resolution);
+            resolution.setSelection(spinnerPostion);
+            spinnerPostion = 0;
+        }
+
     }
 
     @Override
@@ -104,6 +116,7 @@ public class SettingActivity extends ActionBarActivity {
             //Toast.makeText(this, "scanner = "+getCameraType(scanner.getSelectedItem().toString()), Toast.LENGTH_SHORT).show();
             editor.putInt("scanner", getCameraType(scanner.getSelectedItem().toString()));;      // 0 = back camera | 1 = front camera
             editor.putInt("capture", getCameraType(capture.getSelectedItem().toString()));  // 0 = back camera | 1 = front camera
+            editor.putInt("resolution", getResolutionType(resolution.getSelectedItem().toString()));  // 0 = back camera | 1 = front camera
             editor.commit();
             this.finish();
             return true;
@@ -157,5 +170,26 @@ public class SettingActivity extends ActionBarActivity {
             return camera_array[0];
         }
     }
+    public int getResolutionType(String resolution){
+        String[] resolution_array = getResources().getStringArray(R.array.resolution_array);
+        if(resolution.equals(resolution_array[0])) {
+            return 0;
+        }else if(resolution.equals(resolution_array[1])) {
+            return 1;
+        }else{
+            return 0;
+        }
 
+    }
+    public String getResolutionDesc(int resolution){
+        String[] resolution_array = getResources().getStringArray(R.array.resolution_array);
+        //Toast.makeText(this, "camera = "+camera+" | "+camera_array[0]+" | "+camera_array[1], Toast.LENGTH_SHORT).show();
+        if(resolution == 0) {
+            return resolution_array[0];
+        }else if(resolution == 1) {
+            return resolution_array[1];
+        }else{
+            return resolution_array[0];
+        }
+    }
 }

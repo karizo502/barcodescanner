@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
@@ -15,6 +17,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -181,6 +184,7 @@ public class MainActivity extends ActionBarActivity {
             editor.putString("language", "en");
             editor.putInt("scanner", 0);      // 0 = back camera | 1 = front camera
             editor.putInt("capture", 0);  // 0 = back camera | 1 = front camera
+            editor.putInt("resolution", 0);  // 0 = 160x120 | 1 = 320x240
             editor.commit();
             return false;
         } else {
@@ -223,6 +227,7 @@ public class MainActivity extends ActionBarActivity {
             intent = new Intent(getApplicationContext(), CaptureActivity.class);
             startActivity(intent);
         }else if(globalVariable.getState().equals("capture")){
+            displayimages();
             globalVariable.setState("main");
         }
     }
@@ -236,7 +241,17 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
+    private void displayimages()
+    {
+        // TODO Auto-generated method stub
+        ImageView iv = (ImageView) findViewById(R.id.imagetime);
 
+        String callnameRimage = "/sdcard/timeattendance/tmp.png";
+        Bitmap bitmap1 = BitmapFactory.decodeFile(callnameRimage);
+        iv.setImageBitmap(bitmap1);
+
+
+    }
 }
 
 

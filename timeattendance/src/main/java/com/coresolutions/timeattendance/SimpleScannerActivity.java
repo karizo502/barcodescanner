@@ -101,8 +101,11 @@ public class SimpleScannerActivity extends ActionBarActivity implements ZBarScan
 
         public void postData(String valueIWantToSend) {
             // Create a new HttpClient and Post Header
+            SharedPreferences settings = getSharedPreferences("ConfigFile", 0);
+            String ipAddress = settings.getString("ipaddress", "");
+            int port = settings.getInt("port", 80);
             HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost("http://157.179.24.77/timeattendance/connect_base.php");
+            HttpPost httppost = new HttpPost("http://"+ipAddress+":"+port+"/timeattendance/connect_base.php");
 
             try {
                 // Add your data
